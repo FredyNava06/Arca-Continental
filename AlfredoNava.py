@@ -165,18 +165,19 @@ if uploaded_file is not None:
             sheet_name=Hoja_Merma
         )
 
-        df["Fecha de registro"] = pd.to_datetime(
-            df["Fecha de registro"], 
-            format="%d/%m/%Y", 
+        df["Fecha"] = pd.to_datetime(
+            df["Fecha"],
+            format="%d/%m/%Y",
             errors="coerce"
         )
 
-        df["Año"] = df["Fecha de registro"].dt.isocalendar().year
-
-        df["Semana"] = df["Fecha de registro"].dt.isocalendar().week
-    
         df["Kg merma"] = pd.to_numeric(
             df["Kg merma"],
+            errors="coerce"
+        )
+
+        df["Costo"] = pd.to_numeric(
+            df["Costo"],
             errors="coerce"
         )
 
@@ -189,8 +190,8 @@ if uploaded_file is not None:
             .str.title()
         )
 
-        df["Motivo de merma"] = (
-            df["Motivo de merma"]
+        df["Motivo merma"] = (
+            df["Motivo merma"]
             .str.strip()
             .str.normalize("NFKD")
             .str.encode("ascii", errors="ignore")
@@ -274,13 +275,13 @@ if uploaded_file is not None:
             # ---------------------------------------------
 
             top_motivos = (
-                m.groupby("Motivo de merma")["Kg merma"]
+                m.groupby("Motivo merma")["Kg merma"]
                 .sum()
                 .nlargest(3)
             )
 
             sin_clasificar_mot = (
-                m[m["Motivo de merma"].isna()]
+                m[m["Motivo merma"].isna()]
                 ["Kg merma"]
                 .sum()
             )
@@ -422,7 +423,7 @@ if uploaded_file is not None:
             # ─────────────────────────────────────────────
 
             data_mot = (
-                m.groupby("Motivo de merma")["Kg merma"]
+                m.groupby("Motivo merma")["Kg merma"]
                 .sum()
                 .nlargest(5)
                 .sort_values(ascending=True)
